@@ -1,0 +1,259 @@
+from tkinter import * 
+import parser 
+import math
+import tkinter.messagebox 
+ 
+root = Tk() 
+root.title('Scientific Calculator') 
+root.resizable(width=False,height=False)
+ 
+i = 0 
+#-----------------------------------------------------------------------
+def factorial(): 
+    """Calculates the factorial of the number entered.""" 
+    whole_string = display.get() 
+    number = float(whole_string) 
+    fact = 1 
+    counter = number  
+    try: 
+        while counter > 0: 
+            fact = fact*counter 
+            counter -= 1 
+        clear_all() 
+        display.insert(0, fact) 
+    except Exception: 
+        clear_all() 
+        display.insert(0, "Error") 
+def sine(): 
+    whole_string=display.get() 
+    number=eval(whole_string) 
+ 
+    #number=float(whole_string) 
+    display.insert(0,float(math.sin(math.radians(number)))) 
+    
+def cosine(): 
+    whole_string=display.get() 
+    number=float(whole_string) 
+    if number==90: 
+        clear_all() 
+        display.insert(0,0) 
+    else: 
+        display.insert(0,math.cos(math.radians(number))) 
+ 
+def Tan(): 
+    whole_string=display.get() 
+    number=float(whole_string) 
+    if number==90: 
+        clear_all() 
+        display.insert(0,"not defined") 
+    else: 
+        display.insert(0,math.tan(math.radians(number))) 
+  
+def log(): 
+    whole_string=display.get() 
+    number=float(whole_string)  
+    display.insert(0,math.log10(number)) 
+ 
+def ln(): 
+    whole_string=display.get() 
+    number=int(whole_string)  
+    display.insert(0,math.log(number)) 
+def abs(): 
+    whole_string=display.get() 
+    number=float(whole_string) 
+    display.insert(0,math.abs(number)) 
+def clear_all(): 
+    """clears all the content in the Entry widget""" 
+    display.delete(0, END) 
+ 
+def get_variables(num): 
+    """Gets the user input for operands and puts it inside the entry widget""" 
+    global i 
+    display.insert(i, num) 
+    i += 1 
+ 
+def get_operation(operator): 
+    """Gets the operand the user wants to apply on the functions""" 
+    global i 
+    length = len(operator) 
+    display.insert(i, operator) 
+    i += length 
+ 
+def undo(): 
+    """removes the last entered operator/variable from entry widget""" 
+    whole_string = display.get() 
+    if len(whole_string):        ## repeats until 
+        ## now just decrement the string by one index 
+        new_string = whole_string[:-1] 
+        print(new_string) 
+        clear_all() 
+        display.insert(0, new_string) 
+    else: 
+        clear_all()  
+        display.insert(0, "Error, press AC") 
+def sqroot(): 
+ whole_string=display.get() 
+ try: 
+  formulae=parser.expr(whole_string).compile() 
+  number=eval(formulae) 
+  clear_all() 
+  display.insert(0,math.sqrt(number))   
+ except Exception: 
+  clear_all() 
+  display.insert(0,"Error!")  
+def cuberoot(): 
+        whole_string=display.get() 
+        try: 
+                formulae=parser.expr(whole_string).compile() 
+                number=eval(formulae) 
+                clear_all() 
+                display.insert(0,float(round(number**(1./3)))) 
+        except Exception: 
+                clear_all() 
+                display.insert(0,"Error!") 
+def calculate(): 
+    """ 
+    Evaluates the expression 
+     """ 
+    whole_string = display.get() 
+    try: 
+        formulae = parser.expr(whole_string).compile() 
+        result = eval(formulae) 
+        clear_all() 
+        display.insert(0, result) 
+    except Exception: 
+        clear_all() 
+        display.insert(0, "Error!") 
+        
+def iExit():
+    iExit = tkinter.messagebox.askyesno("Scientific Calculator","Confirm if you want to exit")     
+    if iExit>0:
+        root.destroy()
+        return 
+        
+#-----------------------------------------------------------------------------        
+root.columnconfigure(0,pad=4) 
+root.columnconfigure(1,pad=4) 
+root.columnconfigure(2,pad=4) 
+root.columnconfigure(3,pad=4) 
+root.columnconfigure(4,pad=4) 
+root.rowconfigure(0,pad=4) 
+root.rowconfigure(1,pad=4) 
+root.rowconfigure(2,pad=4) 
+root.rowconfigure(3,pad=4) 
+#ROW 1 
+undo_button = Button(root,bd=8,padx=24,pady=20,font=('arial',20,'bold'), text = "<-", command = undo, foreground = "red") 
+undo_button.grid(row = 2, column = 0) 
+
+sine = Button(root,padx=24,bd=8,pady=20,bg="powder blue",font=('arial',20,'bold'), text = "sin", command = sine) 
+sine.grid(row = 2, column =1) 
+
+cosine = Button(root,padx=24,bd=8,pady=20,bg="powder blue",font=('arial',20,'bold'), text = "cos", command = cosine) 
+cosine.grid(row =2, column =2) 
+
+Tan = Button(root,padx=24,bd=8,pady=20,bg="powder blue",font=('arial',20,'bold'), text = "tan", command = Tan) 
+Tan.grid(row = 2, column = 3) 
+
+divide = Button(root, text = "/",padx=24,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'),command = lambda :  get_operation("/")) 
+divide.grid(row =2, column =5) 
+
+modulo = Button(root, text = "%",padx=24,bd=8,bg="powder blue",font=('arial',20,'bold'),pady=20, command = lambda :  get_operation("%")) 
+modulo.grid(row = 2, column = 4) 
+
+floor = Button(root, text = "//",padx=36,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'),command = lambda :  get_operation("//")) 
+floor.grid(row =2, column =6) 
+#------------------------------Row 2----------------------------------- 
+seven = Button(root,padx=24,pady=20, text = "7",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(7)) 
+seven.grid(row = 3, column = 0) 
+
+eight = Button(root,padx=24,pady=20, text = "8",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(8)) 
+eight.grid(row = 3, column = 1) 
+
+nine = Button(root ,padx=24,pady=20, text = "9",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(9)) 
+nine.grid(row = 3, column = 2) 
+
+pi = Button(root, text = "pi",padx=24,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), command = lambda: get_variables(3.14)) 
+pi.grid(row =3, column =3) 
+
+left_bracket = Button(root,padx=28,pady=24,bd=8,bg="powder blue",font=('arial',20,'bold'), text = "(", command = lambda: get_operation("(")) 
+left_bracket.grid(row = 3, column = 4) 
+
+multiply = Button(root,text = "*",padx=24,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), command =  lambda : get_operation("*")) 
+multiply.grid(row = 3, column = 5) 
+
+e = Button(root, text = "e",padx=40,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), command = lambda: get_variables(2.71828)) 
+e.grid(row =3, column =6) 
+ 
+#---------------------------------------ROW 3 ---------------------------------
+ 
+four = Button(root,padx=24,pady=20, text = "4",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(4)) 
+four.grid(row = 4 , column = 0) 
+
+five = Button(root,padx=24,pady=20,text = "5",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(5)) 
+five.grid(row = 4, column = 1) 
+
+six = Button(root,padx=24,pady=20, text = "6",font=('arial',20,'bold'),bd=8, command = lambda : get_variables(6)) 
+six.grid(row = 4, column = 2) 
+
+right_bracket = Button(root,bd=8,bg="powder blue",font=('arial',20,'bold'), padx=28,pady=24,text = ")", command = lambda: get_operation(")")) 
+right_bracket.grid(row = 4, column = 4) 
+
+minus = Button(root,padx=24,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), text = "-", command =  lambda : get_operation("-")) 
+minus.grid(row = 4, column = 5) 
+
+log10 = Button(root,padx=16,bd=8,pady=20,bg="powder blue",font=('arial',20,'bold'), text = "log", command = log) 
+log10.grid(row = 4, column =3) 
+
+cubert = Button(root,padx=16,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), text = "cubeRt", command = cuberoot) 
+cubert.grid(row = 4, column = 6) 
+
+#----------------------ROW 4------------------------ 
+one = Button(root,padx=24,pady=20, text = "1",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(1)) 
+one.grid(row = 5, column = 0) 
+
+two = Button(root,padx=24,pady=20, text = "2",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(2)) 
+two.grid(row = 5, column = 1) 
+
+three = Button(root,padx=24,pady=20, text = "3",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(3)) 
+three.grid(row = 5, column = 2) 
+
+exp = Button(root,padx=16,pady=16,bd=8,bg="powder blue",font=('arial',20,'bold'), text = "exp", command = lambda: get_operation("**")) 
+exp.grid(row = 5, column = 4) 
+
+plus = Button(root,padx=24,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), text = "+", command =  lambda : get_operation("+")) 
+plus.grid(row =5, column = 5) 
+
+ln = Button(root,padx=24,bd=8,pady=20,bg="powder blue",font=('arial',20,'bold'), text = "ln", command = ln) 
+ln.grid(row = 5, column =3) 
+
+sqrt = Button(root,padx=16,pady=20,bd=8,bg="powder blue",font=('arial',20,'bold'), text = " v ", command = sqroot) 
+sqrt.grid(row = 5, column = 6) 
+#===========================ROW 5-------------------------- 
+
+cls = Button(root,padx=24,pady=20,font=('arial',20,'bold'), text = "CE",bd=8, command = clear_all, foreground = "red") 
+cls.grid(row = 6, column = 0) 
+
+zero = Button(root,padx=24,pady=20, text = "0",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(0)) 
+zero.grid(row = 6, column = 1) 
+
+result = Button(root,padx=24,pady=20,bd=8,font=('arial',20,'bold'), text = "=", command = calculate, foreground = "red") 
+result.grid(row = 6, column = 3) 
+ 
+fact = Button(root,padx=24,bd=8,pady=20,bg="powder blue",font=('arial',20,'bold'), text = "x!", command = factorial) 
+fact.grid(row = 6, column = 5) 
+
+ 
+square = Button(root,bd=8,bg="powder blue",font=('arial',20,'bold'), padx=24,pady=20,text = "^2", command = lambda:get_operation("**2")) 
+square.grid(row = 6, column = 4) 
+
+dot = Button(root,padx=24,pady=20, text = ".",bd=8,font=('arial',20,'bold'), command = lambda : get_variables(".")) 
+dot.grid(row = 6, column = 2) 
+
+exit = Button(root,padx=24,pady=20,bd=8,font=('arial',20,'bold'), text = "exit", command = iExit, foreground = "red") 
+exit.grid(row = 6, column = 6) 
+ 
+ 
+ 
+display = Entry(root, font = ("Calibri", 30)) 
+display.grid(row = 1, columnspan = 8    , sticky = W+E) 
+root.mainloop() 
